@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Keyboard Navigation Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <!-- Control Panel for Dynamic Testing -->
+    <div id="demo-controls-wrapper">
+      <div id="demo-controls-label" style="display:none;">Demo controls</div>
+      <div id="demo-controls" class="open">
+        <button id="demo-controls-toggle" aria-label="Collapse controls">×</button>
+        <div class="demo-controls-content">
+          <strong class="demo-controls-title">Demo Controls:</strong>
+          <div class="demo-controls-buttons">
+            <button id="add-header">Add Header</button>
+            <button id="add-link">Add Link</button>
+            <button id="add-landmark">Add Landmark</button>
+            <button id="remove-last">Remove Last Added</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dynamic-elements-container" class="hidden"></div>
+
+    <nav>
+      <a href="#main">Skip to Main</a> <br />
+      <a href="#footer">Skip to Footer</a>
+    </nav>
+
+    <header>
+      <h1>Keyboard Navigation Utility</h1>
+    </header>
+
+    <main id="main">
+      <h2>Section One</h2>
+      <p>
+        Some content here with a <a href="#">link</a>.
+      </p>
+      <section>
+        <h3>Subsection</h3>
+        <p>
+          <a href="#">Another link</a>
+        </p>
+      </section>
+      <form>
+        <label>Name:<input type="text" /></label>
+        <br />
+        <label>Comments:<textarea></textarea></label>
+      </form>
+    </main>
+
+    <aside>
+      <h2>Related Information</h2>
+      <p>
+        <a href="#">Related Link</a>
+      </p>
+    </aside>
+
+    <footer id="footer">
+      <h2>Footer</h2>
+      <p>
+        Contact us at <a href="mailto:info@example.com">info@example.com</a>.
+      </p>
+    </footer>
+
+    <script type="module">
+      import { initKeyboardNav } from './navigationAZ.js'
+      window.teardown = initKeyboardNav()
+    </script>
+    <script>
+      // Collapsible controls logic
+      const controls = document.getElementById('demo-controls')
+      const wrapper = document.getElementById('demo-controls-wrapper')
+      const label = document.getElementById('demo-controls-label')
+      const toggle = document.getElementById('demo-controls-toggle')
+      function collapseControls() {
+        controls.classList.remove('open')
+        controls.style.display = 'none'
+        label.style.display = 'block'
+      }
+      function expandControls() {
+        controls.classList.add('open')
+        controls.style.display = 'block'
+        label.style.display = 'none'
+      }
+      toggle.addEventListener('click', collapseControls)
+      label.addEventListener('click', expandControls)
+      expandControls()
+      
+      const added = []
+      const container = document.getElementById('dynamic-elements-container')
+      function updateContainerVisibility() {
+        if (container.children.length === 0) {
+          container.classList.add('hidden')
+        } else {
+          container.classList.remove('hidden')
+        }
+      }
+      updateContainerVisibility()
+      document.getElementById('add-header').addEventListener('click', () => {
+        const h = document.createElement('h2')
+        h.textContent = 'Dynamic Header ' + (added.length + 1)
+        h.className = 'dynamic-element'
+        container.appendChild(h)
+        added.push(h)
+        updateContainerVisibility()
+      })
+      document.getElementById('add-link').addEventListener('click', () => {
+        const a = document.createElement('a')
+        a.href = '#'
+        a.textContent = 'Dynamic Link ' + (added.length + 1)
+        a.className = 'dynamic-element'
+        container.appendChild(a)
+        added.push(a)
+        updateContainerVisibility()
+      })
+      document.getElementById('add-landmark').addEventListener('click', () => {
+        const nav = document.createElement('nav')
+        nav.textContent = 'Dynamic Nav Landmark ' + (added.length + 1)
+        nav.className = 'dynamic-element'
+        container.appendChild(nav)
+        added.push(nav)
+        updateContainerVisibility()
+      })
+      document.getElementById('remove-last').addEventListener('click', () => {
+        if (!added.length) return
+        const el = added.pop()
+        el.remove()
+        updateContainerVisibility()
+      })
+    </script>
+  </body>
+</html>
